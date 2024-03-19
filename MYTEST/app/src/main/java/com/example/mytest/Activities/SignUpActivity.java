@@ -52,11 +52,11 @@ public class SignUpActivity extends AppCompatActivity {
         btnSignUp=findViewById(R.id.btnSignUp);
         btnBack=findViewById(R.id.btnBback);
         progressDialog=new Dialog(SignUpActivity.this);
-//        progressDialog.setContentView(R.layout.dialog_layout);
+        progressDialog.setContentView(R.layout.dialog_layout);
         progressDialog.setCancelable(false);
         progressDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
 
-//        dialogText=progressDialog.findViewById(R.id.dialog_text);
+        dialogText=progressDialog.findViewById(R.id.dialog_text);
         dialogText.setText("Registering user...");
 
         mAuth= FirebaseAuth.getInstance();

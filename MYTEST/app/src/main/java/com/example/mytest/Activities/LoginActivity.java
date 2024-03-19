@@ -58,11 +58,11 @@ public class LoginActivity extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
 
         progressDialog=new Dialog(LoginActivity.this);
-//        progressDialog.setContentView(R.layout.dialog_layout);
+        progressDialog.setContentView(R.layout.dialog_layout);
         progressDialog.setCancelable(false);
         progressDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
 
-//        dialogText=progressDialog.findViewById(R.id.dialog_text);
+        dialogText=progressDialog.findViewById(R.id.dialog_text);
         dialogText.setText("Signing in...");
 
         //Configure Google Sign In
@@ -125,11 +125,11 @@ public class LoginActivity extends AppCompatActivity {
                                     progressDialog.dismiss();
                                     Intent intent;
                                     if(inputEmail.equals("admin123@gmail.com")) {
-//                                        intent = new Intent(LoginActivity.this);
+                                        intent = new Intent(LoginActivity.this, AdminActivity.class);
                                     } else {
                                         intent = new Intent(LoginActivity.this, MainActivity.class);
                                     }
-//                                    startActivity(intent);
+                                    startActivity(intent);
                                     finish();
                                 }
 

@@ -21,12 +21,6 @@
             android:name=".Activities.AdminActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.SearchActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.FindTestActivity"
-            android:exported="false" />
-        <activity
             android:name=".Activities.ScoreActivity"
             android:exported="false" />
         <activity
