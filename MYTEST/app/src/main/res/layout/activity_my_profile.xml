@@ -115,7 +115,7 @@
                 android:id="@+id/mp_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Phone Number"
+                android:hint="ID"
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 

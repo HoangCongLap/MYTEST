@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="16dp">
+    android:padding="16dp"
+    tools:ignore="MissingDefaultResource">
 
     <TextView
         android:id="@+id/stt"
@@ -17,32 +19,22 @@
         android:padding="4dp" />
 
     <TextView
-        android:id="@+id/tenNguoiDung"
+        android:id="@+id/tenTest"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="3"
-        android:text="Tên người dùng"
+        android:text="Bài test đã làm"
         android:ellipsize="end"
         android:maxLines="2"
         android:background="@drawable/border"
         android:padding="4dp" />
 
     <TextView
-        android:id="@+id/email"
+        android:id="@+id/diem"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:text="Email"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:background="@drawable/border"
-        android:padding="4dp" />
-    <TextView
-        android:id="@+id/ngayTao"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:text="Ngày tạo"
+        android:layout_weight="1"
+        android:text="Điểm"
         android:ellipsize="end"
         android:maxLines="2"
         android:background="@drawable/border"
@@ -63,18 +55,5 @@
             />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/deleteButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_bin"
-
-            />
-    </LinearLayout>
 </LinearLayout>

@@ -1,7 +1,5 @@
 package com.example.mytest.Adapters;
 
-
-
 import static com.example.mytest.DbQuery.ANSWERED;
 import static com.example.mytest.DbQuery.REVIEW;
 import static com.example.mytest.DbQuery.UNANSWERED;

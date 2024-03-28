@@ -14,6 +14,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -41,6 +43,7 @@ public class DbQuery {
     public static int g_selected_cat_index = 0;
     public static List<TestModel> g_testList = new ArrayList<>();
     public static int g_selected_test_index = 0;
+    public static int g_selected_ques_index = 0;
     public static List<String> g_bmIdList = new ArrayList<>();
     public static List<QuestionModel> g_bookmarksList = new ArrayList<>();
     public static List<QuestionModel> g_quesList = new ArrayList<>();
@@ -55,6 +58,12 @@ public class DbQuery {
     public static final int REVIEW = 3;
     public static RankModel myPerformance = new RankModel("NULL", 0, -1);
     static int tmp;
+    public static final int PICK_IMAGE_REQUEST_Ques = 1;
+    public static final int PICK_IMAGE_REQUEST_A = 2;
+    public static final int PICK_IMAGE_REQUEST_B = 3;
+    public static final int PICK_IMAGE_REQUEST_C = 4;
+    public static final int PICK_IMAGE_REQUEST_D = 5;
+
     public static void createUserData(String email, String name, MyCompleteListener completeListener) {
         Map<String, Object> userData = new ArrayMap<>();
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -135,19 +144,23 @@ public class DbQuery {
                     }
                 });
     }
-    public static void loadUserData(MyCompleteListener completeListener) {
+   /* public static void loadUserData(MyCompleteListener completeListener) {
         g_usersData.clear();
         g_firestore.collection("USERS").get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         for (DocumentSnapshot userDoc : queryDocumentSnapshots) {
-                            String emailId = userDoc.getString("EMAIL_ID");
-                            String name = userDoc.getString("NAME");
-                            String phone = userDoc.getString("PHONE");
-                            String ngayTao = userDoc.getString("ngayTao");
+                            // Kiểm tra xem tài liệu có phải là "TOTAL_USERS" không
+                            if (!userDoc.getId().equals("TOTAL_USERS")) {
+                                String userId = userDoc.getId(); // Lấy ID của người dùng
+                                String emailId = userDoc.getString("EMAIL_ID");
+                                String name = userDoc.getString("NAME");
+                                String phone = userDoc.getString("PHONE");
+                                String ngayTao = userDoc.getString("ngayTao");
 
-                            g_usersData.add(new ProfileModel(name, emailId, phone, ngayTao));
+                                g_usersData.add(new ProfileModel(userId, name, emailId, phone, ngayTao));
+                            }
                         }
                         completeListener.onSuccess();
                     }
@@ -158,8 +171,64 @@ public class DbQuery {
                         completeListener.onFailure();
                     }
                 });
-    }
+    }*/
+   public static void loadUserData(MyCompleteListener completeListener) {
+       g_usersData.clear();
+       g_firestore.collection("USERS").get()
+               .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                   @Override
+                   public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                       for (DocumentSnapshot userDoc : queryDocumentSnapshots) {
+                           // Kiểm tra xem tài liệu có phải là "TOTAL_USERS" không
+                           if (!userDoc.getId().equals("TOTAL_USERS")) {
+                               String userId = userDoc.getId(); // Lấy ID của người dùng
+                               String emailId = userDoc.getString("EMAIL_ID");
+                               String name = userDoc.getString("NAME");
+                               String phone = userDoc.getString("PHONE");
+                               String ngayTao = userDoc.getString("ngayTao");
 
+                               g_usersData.add(new ProfileModel(userId, name, emailId,phone,ngayTao));
+                           }
+                       }
+                       completeListener.onSuccess();
+                   }
+               })
+               .addOnFailureListener(new OnFailureListener() {
+                   @Override
+                   public void onFailure(@NonNull Exception e) {
+                       completeListener.onFailure();
+                   }
+               });
+   }
+    public static void deleteUser(String userId, MyCompleteListener completeListener) {
+        g_firestore.collection("USERS").document(userId).delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Giảm COUNT trong TOTAL_USERS
+                        g_firestore.collection("USERS").document("TOTAL_USERS")
+                                .update("COUNT", FieldValue.increment(-1))
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        completeListener.onSuccess();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        completeListener.onFailure();
+                                    }
+                                });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        completeListener.onFailure();
+                    }
+                });
+    }
     public static void loadMyScores(MyCompleteListener completeListener) {
         g_firestore.collection("USERS").document(FirebaseAuth.getInstance().getUid())
                 .collection("USER_DATA").document("MY_SCORES")
@@ -410,6 +479,74 @@ public class DbQuery {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        completeListener.onFailure();
+                    }
+                });
+    }
+    public static void addQuestion(QuestionModel newQuestion, MyCompleteListener completeListener) {
+        // Tạo một Map để lưu trữ dữ liệu của câu hỏi mới
+        Map<String, Object> questionData = new HashMap<>();
+        questionData.put("QUESTION", newQuestion.getQuestion());
+        questionData.put("A", newQuestion.getOptionA());
+        questionData.put("B", newQuestion.getOptionB());
+        questionData.put("C", newQuestion.getOptionC());
+        questionData.put("D", newQuestion.getOptionD());
+        questionData.put("IMGQUES", newQuestion.getImgQues());
+        questionData.put("IMGA", newQuestion.getImgA());
+        questionData.put("IMGB", newQuestion.getImgB());
+        questionData.put("IMGC", newQuestion.getImgC());
+        questionData.put("IMGD", newQuestion.getImgD());
+        questionData.put("ANSWER", newQuestion.getCorrectAns());
+        questionData.put("CATEGORY", g_catList.get(g_selected_cat_index).getDocID());
+        questionData.put("TEST", g_testList.get(g_selected_test_index).getTestID());
+        
+
+        // Thêm câu hỏi mới vào Firestore
+        g_firestore.collection("Questions")
+                .add(questionData)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        // Cập nhật ID của câu hỏi mới
+                        newQuestion.setqID(documentReference.getId());
+
+                        // Thêm câu hỏi mới vào danh sách câu hỏi
+                        g_quesList.add(newQuestion);
+
+                        // Gọi phương thức onSuccess của completeListener
+                        completeListener.onSuccess();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Gọi phương thức onFailure của completeListener
+                        completeListener.onFailure();
+                    }
+                });
+    }
+    public static void deleteQuestion(String questionId, MyCompleteListener completeListener) {
+        g_firestore.collection("Questions")
+                .document(questionId)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Xóa câu hỏi khỏi danh sách câu hỏi
+                        for (int i = 0; i < g_quesList.size(); i++) {
+                            if (g_quesList.get(i).getqID().equals(questionId)) {
+                                g_quesList.remove(i);
+                                break;
+                            }
+                        }
+                        // Gọi phương thức onSuccess của completeListener
+                        completeListener.onSuccess();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Gọi phương thức onFailure của completeListener
                         completeListener.onFailure();
                     }
                 });

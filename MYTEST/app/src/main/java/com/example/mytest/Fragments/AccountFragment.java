@@ -1,6 +1,5 @@
 package com.example.mytest.Fragments;
 
-
 import static com.example.mytest.DbQuery.g_usersCount;
 import static com.example.mytest.DbQuery.g_usersList;
 import static com.example.mytest.DbQuery.myPerformance;

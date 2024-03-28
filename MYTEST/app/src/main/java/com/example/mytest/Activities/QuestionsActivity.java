@@ -34,14 +34,21 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import com.example.mytest.Adapters.QuestionGridAdapter;
 import com.example.mytest.Adapters.QuestionsAdapter;
+import com.example.mytest.DbQuery;
 import com.example.mytest.Models.QuestionModel;
 import com.example.mytest.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.mlkit.nl.languageid.LanguageIdentification;
 import com.google.mlkit.nl.languageid.LanguageIdentifier;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class QuestionsActivity extends AppCompatActivity {
@@ -224,25 +231,15 @@ public class QuestionsActivity extends AppCompatActivity {
                 }
             }
         });
-
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-            /*    // Kiểm tra xem danh sách câu hỏi còn câu hỏi nào không
-                if (g_quesList.isEmpty()) {
-                    // Hiển thị thông báo "Không còn câu hỏi nào"
-                    Toast.makeText(QuestionsActivity.this, "There are no more questions.", Toast.LENGTH_SHORT).show();
-
-                    // Chuyển về StartTestActivity
-                    Intent intent = new Intent(QuestionsActivity.this, StartTestActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else{*/
                     submitTest();
-              //  }
             }
         });
+
+
         btnBookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -374,3 +371,20 @@ public class QuestionsActivity extends AppCompatActivity {
         }
     }
 }
+/*    private void setBookMarks(){
+        for(int i=0; i<DbQuery.g_quesList.size();i++){
+            QuestionModel question=DbQuery.g_quesList.get(i);
+            if(question.isBookmarked())
+            {
+                if(! DbQuery.g_bmIdList.contains(question.getqID())){
+                    DbQuery.g_bmIdList.add(question.getqID());
+                    DbQuery.myProfile.setBookmarksCount(DbQuery.g_bmIdList.size());
+                }
+            }else {
+                if(DbQuery.g_bmIdList.contains(question.getqID())){
+                    DbQuery.g_bmIdList.remove(question.getqID());
+                    DbQuery.myProfile.setBookmarksCount(DbQuery.g_bmIdList.size());
+                }
+            }
+        }
+    }*/
